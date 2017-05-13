@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="pile">
+        <attr name="interval" format="dimension" />
+        <attr name="widthHeightRate" format="float" />
+        <attr name="scaleStep" format="float" />
+    </declare-styleable>
+</resources>
