@@ -29,5 +29,4 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.8.0'
     compile 'com.makeramen:roundedimageview:2.3.0'
     compile project(':library')
-    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
 }
