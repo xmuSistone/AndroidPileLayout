@@ -127,8 +127,8 @@ public class MainActivity extends AppCompatActivity {
                 if (viewHolder == null) {
                     viewHolder = new ViewHolder();
                     viewHolder.imageView = (ImageView) view.findViewById(R.id.imageView);
+                    view.setTag(viewHolder);
                 }
-                view.setTag(viewHolder);
 
                 Glide.with(MainActivity.this).load(dataList.get(position).getCoverImageUrl()).into(viewHolder.imageView);
             }
