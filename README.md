@@ -43,6 +43,7 @@ pileLayout.setAdapter(new PileLayout.Adapter() {
                 if (viewHolder == null) {
                     viewHolder = new ViewHolder();
                     viewHolder.imageView = (ImageView) view.findViewById(R.id.imageView);
+                    view.setTag(viewHolder);
                 }
                 // recycled view bind new position
             }
