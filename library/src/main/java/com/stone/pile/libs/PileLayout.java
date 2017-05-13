@@ -29,7 +29,7 @@ public class PileLayout extends ViewGroup {
 
     // 以下三个参数，可通过属性定制
     private int interval = 30; // view之间的间隔
-    private float widthHeightRate = 1.1f;
+    private float sizeRatio = 1.1f;
     private float scaleStep = 0.36f;
 
     private int everyWidth;
@@ -65,7 +65,7 @@ public class PileLayout extends ViewGroup {
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.pile);
         interval = (int) a.getDimension(R.styleable.pile_interval, interval);
-        widthHeightRate = a.getFloat(R.styleable.pile_widthHeightRate, widthHeightRate);
+        sizeRatio = a.getFloat(R.styleable.pile_sizeRatio, sizeRatio);
         scaleStep = a.getFloat(R.styleable.pile_scaleStep, scaleStep);
         a.recycle();
 
@@ -98,7 +98,7 @@ public class PileLayout extends ViewGroup {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
         everyWidth = (int) ((width - getPaddingLeft() - getPaddingRight() - interval * 8) / 2.4);
-        everyHeight = (int) (everyWidth * widthHeightRate);
+        everyHeight = (int) (everyWidth * sizeRatio);
         setMeasuredDimension(width, (int) (everyHeight * (1 + scaleStep) + getPaddingTop() + getPaddingBottom()));
 
         // 把每个View的初始位置坐标都计算好

@@ -60,7 +60,7 @@
         android:paddingTop="5dp"
         pile:interval="10dp"
         pile:scaleStep="0.22"
-        pile:widthHeightRate="1.22" />
+        pile:sizeRatio="1.22" />
 
     <LinearLayout
         android:layout_width="match_parent"
