@@ -8,7 +8,7 @@ An abnormal horizontal ListView-like pile layout.
 Recently I have seen this kind of UI design, and at first I was trying to implement it by using Recycler.LayoutManager. Unfortunately, I am unable to contrust a clear Math model while sliding the PileView. After several tries, I gave up LayoutManager, and find another way for this implementation. If u make LayoutManager works well for this design, please tell me.
 
 ### how to use
-#### 1. decleare PileLayout in your xml file
+1. decleare PileLayout in your xml file
 ```xml
 <com.stone.pile.libs.PileLayout
         android:id="@+id/pileLayout"
@@ -28,6 +28,7 @@ Meanwhile, pileLayout is able to be customized by these three params:
 | sizeRatio | float |each item's height/witdth
 | scaleStep | float |size scale step when needed
 
+2. in Java files:
 ```java
 pileLayout = (PileLayout) findViewById(R.id.pileLayout);
 pileLayout.setAdapter(new PileLayout.Adapter() {
@@ -43,6 +44,7 @@ pileLayout.setAdapter(new PileLayout.Adapter() {
                 if (viewHolder == null) {
                     viewHolder = new ViewHolder();
                     viewHolder.imageView = (ImageView) view.findViewById(R.id.imageView);
+                    view.setTag(viewHolder);
                 }
                 // recycled view bind new position
             }
