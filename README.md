@@ -16,17 +16,19 @@ Recently I have seen this kind of UI design, and at first I was trying to implem
         android:layout_height="wrap_content"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
+        pile:displayCount="1.5"
         pile:interval="10dp"
         pile:scaleStep="0.22"
         pile:widthHeightRate="1.22" />
 ```
-Meanwhile, pileLayout is able to be customized by these three params:
+Meanwhile, pileLayout is able to be customized by these 4 params:
 
 |name|format|description|
 |:---:|:---:|:---:|
 | interval | dimension |items-margin each other
 | sizeRatio | float |each item's height/witdth
 | scaleStep | float |size scale step when needed
+| displayCount | float |number of items that may display
 
 2. in Java files:
 ```java
