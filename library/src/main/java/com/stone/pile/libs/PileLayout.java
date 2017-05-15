@@ -51,6 +51,7 @@ public class PileLayout extends ViewGroup {
     private Interpolator interpolator = new DecelerateInterpolator();
     private Adapter adapter;
     private boolean hasSetAdapter = false;
+    private float displayCount = 1.6f;
 
     public PileLayout(Context context) {
         this(context, null);
@@ -67,6 +68,7 @@ public class PileLayout extends ViewGroup {
         interval = (int) a.getDimension(R.styleable.pile_interval, interval);
         sizeRatio = a.getFloat(R.styleable.pile_sizeRatio, sizeRatio);
         scaleStep = a.getFloat(R.styleable.pile_scaleStep, scaleStep);
+        displayCount = a.getFloat(R.styleable.pile_displayCount, displayCount);
         a.recycle();
 
         ViewConfiguration configuration = ViewConfiguration.get(getContext());
@@ -97,7 +99,7 @@ public class PileLayout extends ViewGroup {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
-        everyWidth = (int) ((width - getPaddingLeft() - getPaddingRight() - interval * 8) / 2.4);
+        everyWidth = (int) ((width - getPaddingLeft() - getPaddingRight() - interval * 8) / displayCount);
         everyHeight = (int) (everyWidth * sizeRatio);
         setMeasuredDimension(width, (int) (everyHeight * (1 + scaleStep) + getPaddingTop() + getPaddingBottom()));
 
@@ -229,7 +231,7 @@ public class PileLayout extends ViewGroup {
             case MotionEvent.ACTION_MOVE:
                 int currentX = (int) event.getX();
                 int dx = (int) (currentX - lastX);
-                requireScrollChange(dx * 2 / 3);
+                requireScrollChange(dx);
                 lastX = currentX;
                 break;
 

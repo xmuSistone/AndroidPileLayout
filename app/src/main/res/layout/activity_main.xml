@@ -58,9 +58,10 @@
         android:layout_height="wrap_content"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
+        pile:displayCount="1.5"
         pile:interval="10dp"
-        pile:scaleStep="0.22"
-        pile:sizeRatio="1.22" />
+        pile:scaleStep="0.32"
+        pile:sizeRatio="0.78" />
 
     <LinearLayout
         android:layout_width="match_parent"
