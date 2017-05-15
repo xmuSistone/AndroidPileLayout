@@ -329,6 +329,10 @@ public class PileLayout extends ViewGroup {
         for (int i = 0; i < num; i++) {
             View itemView = itemViewList.get(i);
             int position = (int) (rate * (originX.get(i + 1) - originX.get(i))) + originX.get(i);
+            if (position > originX.get(i + 1) && i + 1 < originX.size()) {
+                position = originX.get(i + 1);
+            }
+
             itemView.offsetLeftAndRight(position - itemView.getLeft());
             adjustAlpha(itemView); // 调整透明度
             adjustScale(itemView); // 调整缩放
