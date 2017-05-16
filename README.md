@@ -2,11 +2,11 @@
 An abnormal horizontal ListView-like pile layout.
 
 ### captured images
-The following captured pictures were recorded earlier, since the source code and the outputted-apk has changed some params, and you must be having a different UI when you run the code or install the apk file. Hope there exists no confusions later.  <br><br>
+The following captured pictures were recorded earlier, since the source code and the outputted-apk has changed some params, and you must be having a different UI when you run the code or install the apk file. Hope there has no confusions later.  <br><br>
 <img src="capture/capture1.gif" width="360" height="645"/> <img src="capture/capture2.gif" width="360" height="645"/> 
 
 ### design
-Recently I have seen this kind of UI design, and at first I was trying to implement it by using Recycler.LayoutManager. Unfortunately, I am unable to contrust a clear Math model while sliding the PileView. After several tries, I gave up LayoutManager, and find another way for this implementation. If u make LayoutManager works well for this design, please tell me.
+Recently I have seen this kind of UI design, and at first I was trying to implement it by using RecyclerView.LayoutManager. Unfortunately, I am unable to contrust a clear Math model while sliding the PileView. After several tries, I gave up LayoutManager, and find another way for this implementation. If u make LayoutManager works well for this design, please tell me.
 
 ### how to use
 1. decleare PileLayout in your xml file
