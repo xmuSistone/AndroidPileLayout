@@ -2,6 +2,7 @@
 An abnormal horizontal ListView-like pile layout.
 
 ### captured images
+The following captured pictures were recorded earlier, since the source code and the outputted-apk has changed some params, and you must be having a different UI when you run the code or install the apk file. Hope there exists no confusions later.  <br><br>
 <img src="capture/capture1.gif" width="360" height="645"/> <img src="capture/capture2.gif" width="360" height="645"/> 
 
 ### design
