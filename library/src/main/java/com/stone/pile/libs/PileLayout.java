@@ -52,6 +52,7 @@ public class PileLayout extends ViewGroup {
     private Adapter adapter;
     private boolean hasSetAdapter = false;
     private float displayCount = 1.6f;
+    private FrameLayout animatingView;
 
     public PileLayout(Context context) {
         this(context, null);
@@ -237,9 +238,10 @@ public class PileLayout extends ViewGroup {
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                lastX = itemViewList.get(3).getLeft();
+                animatingView = itemViewList.get(3);
+                lastX = animatingView.getLeft();
                 float destX = originX.get(3);
-                int tag = Integer.parseInt(itemViewList.get(3).getTag().toString());
+                int tag = Integer.parseInt(animatingView.getTag().toString());
                 if (event.getX() > downX) {
                     destX = originX.get(4);
                     tag--;
@@ -424,7 +426,7 @@ public class PileLayout extends ViewGroup {
      */
     public void setAnimateValue(float animateValue) {
         this.animateValue = animateValue; // 当前应该在的位置
-        int dx = Math.round(animateValue - lastX);
+        int dx = Math.round(animateValue - animatingView.getLeft());
         requireScrollChange(dx);
         lastX = animateValue;
     }
