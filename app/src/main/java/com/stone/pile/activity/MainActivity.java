@@ -209,10 +209,12 @@ public class MainActivity extends AppCompatActivity {
             JSONArray jsonArray = jsonObject.optJSONArray("result");
             if (null != jsonArray) {
                 int len = jsonArray.length();
-                for (int i = 0; i < len; i++) {
-                    JSONObject itemJsonObject = jsonArray.getJSONObject(i);
-                    ItemEntity itemEntity = new ItemEntity(itemJsonObject);
-                    dataList.add(itemEntity);
+                for (int j = 0; j < 3; j++) {
+                    for (int i = 0; i < len; i++) {
+                        JSONObject itemJsonObject = jsonArray.getJSONObject(i);
+                        ItemEntity itemEntity = new ItemEntity(itemJsonObject);
+                        dataList.add(itemEntity);
+                    }
                 }
             }
         } catch (Exception e) {

@@ -3,10 +3,10 @@ package com.stone.pile.libs;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
@@ -24,6 +24,7 @@ import java.util.List;
 
 public class PileLayout extends ViewGroup {
 
+    private final int mMaximumVelocity;
     private List<FrameLayout> itemViewList = new ArrayList<>();
     private OnClickListener onClickListener;
 
@@ -41,6 +42,7 @@ public class PileLayout extends ViewGroup {
     private static final int MODE_IDLE = 0;
     private static final int MODE_HORIZONTAL = 1;
     private static final int MODE_VERTICAL = 2;
+    private static final int VELOCITY_THRESHOLD = 500;
     private int scrollMode;
     private int downX, downY;
     private float lastX;
@@ -53,6 +55,7 @@ public class PileLayout extends ViewGroup {
     private boolean hasSetAdapter = false;
     private float displayCount = 1.6f;
     private FrameLayout animatingView;
+    private VelocityTracker mVelocityTracker;
 
     public PileLayout(Context context) {
         this(context, null);
@@ -74,6 +77,7 @@ public class PileLayout extends ViewGroup {
 
         ViewConfiguration configuration = ViewConfiguration.get(getContext());
         mTouchSlop = configuration.getScaledTouchSlop();
+        mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
 
         onClickListener = new OnClickListener() {
             @Override
@@ -201,6 +205,9 @@ public class PileLayout extends ViewGroup {
                     animator.cancel();
                 }
 
+                initVelocityTrackerIfNotExists();
+                mVelocityTracker.addMovement(event);
+
                 break;
 
             case MotionEvent.ACTION_MOVE:
@@ -217,12 +224,18 @@ public class PileLayout extends ViewGroup {
                     }
                 }
                 break;
+
+            case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_UP:
+                recycleVelocityTracker();
+                break;
         }
         return false; // 默认都是不拦截的
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        mVelocityTracker.addMovement(event);
         int action = event.getActionMasked();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
@@ -238,11 +251,18 @@ public class PileLayout extends ViewGroup {
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+                final VelocityTracker velocityTracker = mVelocityTracker;
+                velocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
+                int velocity = (int) velocityTracker.getXVelocity();
+                recycleVelocityTracker();
+
                 animatingView = itemViewList.get(3);
-                lastX = animatingView.getLeft();
-                float destX = originX.get(3);
                 int tag = Integer.parseInt(animatingView.getTag().toString());
-                if (event.getX() > downX) {
+                lastX = animatingView.getLeft();
+
+                // 计算目标位置
+                float destX = originX.get(3);
+                if (velocity > VELOCITY_THRESHOLD || (animatingView.getLeft() > originX.get(3) + scrollDistanceMax / 2 && velocity > -VELOCITY_THRESHOLD)) {
                     destX = originX.get(4);
                     tag--;
                 }
@@ -418,6 +438,27 @@ public class PileLayout extends ViewGroup {
                 adapter.displaying(0);
             }
         }
+    }
+
+    private void initVelocityTrackerIfNotExists() {
+        if (mVelocityTracker == null) {
+            mVelocityTracker = VelocityTracker.obtain();
+        }
+    }
+
+    private void recycleVelocityTracker() {
+        if (mVelocityTracker != null) {
+            mVelocityTracker.recycle();
+            mVelocityTracker = null;
+        }
+    }
+
+    @Override
+    public void requestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+        if (disallowIntercept) {
+            recycleVelocityTracker();
+        }
+        super.requestDisallowInterceptTouchEvent(disallowIntercept);
     }
 
 
