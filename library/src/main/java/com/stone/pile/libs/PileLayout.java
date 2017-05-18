@@ -50,7 +50,7 @@ public class PileLayout extends ViewGroup {
 
     private float animateValue;
     private ObjectAnimator animator;
-    private Interpolator interpolator = new DecelerateInterpolator();
+    private Interpolator interpolator = new DecelerateInterpolator(2f);
     private Adapter adapter;
     private boolean hasSetAdapter = false;
     private float displayCount = 1.6f;
@@ -207,6 +207,7 @@ public class PileLayout extends ViewGroup {
 
                 initVelocityTrackerIfNotExists();
                 mVelocityTracker.addMovement(event);
+                animatingView = null;
 
                 break;
 
@@ -257,8 +258,8 @@ public class PileLayout extends ViewGroup {
                 recycleVelocityTracker();
 
                 animatingView = itemViewList.get(3);
+                animateValue = animatingView.getLeft();
                 int tag = Integer.parseInt(animatingView.getTag().toString());
-                lastX = animatingView.getLeft();
 
                 // 计算目标位置
                 float destX = originX.get(3);
@@ -266,14 +267,14 @@ public class PileLayout extends ViewGroup {
                     destX = originX.get(4);
                     tag--;
                 }
-                if (tag < 0 || tag >= adapter.getItemCount() || Math.abs(lastX - destX) < mTouchSlop) {
+                if (tag < 0 || tag >= adapter.getItemCount() || Math.abs(animatingView.getLeft() - destX) < mTouchSlop) {
                     return true;
                 }
 
                 adapter.displaying(tag);
-                animator = ObjectAnimator.ofFloat(this, "animateValue", lastX, destX);
+                animator = ObjectAnimator.ofFloat(this, "animateValue", animatingView.getLeft(), destX);
                 animator.setInterpolator(interpolator);
-                animator.setDuration(300).start();
+                animator.setDuration(360).start();
 
                 break;
         }
@@ -348,14 +349,25 @@ public class PileLayout extends ViewGroup {
         if (rate < 0) {
             rate = 0;
         }
+        int position1 = Math.round(rate * (originX.get(2) - originX.get(1))) + originX.get(1);
+        boolean endAnim = false;
+        if (position1 >= originX.get(2) && null != animatingView) {
+            animator.cancel();
+            endAnim = true;
+        }
         for (int i = 0; i < num; i++) {
             View itemView = itemViewList.get(i);
-            int position = (int) (rate * (originX.get(i + 1) - originX.get(i))) + originX.get(i);
-            if (position > originX.get(i + 1) && i + 1 < originX.size()) {
-                position = originX.get(i + 1);
+            if (endAnim) {
+                itemView.offsetLeftAndRight(originX.get(i + 1) - itemView.getLeft());
+            } else if (itemView == animatingView) {
+                itemView.offsetLeftAndRight(dx);
+            } else {
+                int position = Math.round(rate * (originX.get(i + 1) - originX.get(i))) + originX.get(i);
+                if (i + 1 < originX.size() && position >= originX.get(i + 1)) {
+                    position = originX.get(i + 1);
+                }
+                itemView.offsetLeftAndRight(position - itemView.getLeft());
             }
-
-            itemView.offsetLeftAndRight(position - itemView.getLeft());
             adjustAlpha(itemView); // 调整透明度
             adjustScale(itemView); // 调整缩放
         }
@@ -469,7 +481,6 @@ public class PileLayout extends ViewGroup {
         this.animateValue = animateValue; // 当前应该在的位置
         int dx = Math.round(animateValue - animatingView.getLeft());
         requireScrollChange(dx);
-        lastX = animateValue;
     }
 
     public float getAnimateValue() {
