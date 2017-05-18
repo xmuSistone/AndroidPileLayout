@@ -42,7 +42,7 @@ public class PileLayout extends ViewGroup {
     private static final int MODE_IDLE = 0;
     private static final int MODE_HORIZONTAL = 1;
     private static final int MODE_VERTICAL = 2;
-    private static final int VELOCITY_THRESHOLD = 500;
+    private static final int VELOCITY_THRESHOLD = 200;
     private int scrollMode;
     private int downX, downY;
     private float lastX;
@@ -50,7 +50,7 @@ public class PileLayout extends ViewGroup {
 
     private float animateValue;
     private ObjectAnimator animator;
-    private Interpolator interpolator = new DecelerateInterpolator(2f);
+    private Interpolator interpolator = new DecelerateInterpolator(2.6f);
     private Adapter adapter;
     private boolean hasSetAdapter = false;
     private float displayCount = 1.6f;
