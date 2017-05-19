@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class PileLayout extends ViewGroup {
 
     private float animateValue;
     private ObjectAnimator animator;
-    private Interpolator interpolator = new DecelerateInterpolator(2.6f);
+    private Interpolator interpolator = new DecelerateInterpolator(1.6f);
     private Adapter adapter;
     private boolean hasSetAdapter = false;
     private float displayCount = 1.6f;
@@ -262,12 +263,16 @@ public class PileLayout extends ViewGroup {
                 int tag = Integer.parseInt(animatingView.getTag().toString());
 
                 // 计算目标位置
-                float destX = originX.get(3);
+                int destX = originX.get(3);
                 if (velocity > VELOCITY_THRESHOLD || (animatingView.getLeft() > originX.get(3) + scrollDistanceMax / 2 && velocity > -VELOCITY_THRESHOLD)) {
                     destX = originX.get(4);
                     tag--;
                 }
-                if (tag < 0 || tag >= adapter.getItemCount() || Math.abs(animatingView.getLeft() - destX) < mTouchSlop) {
+                if (tag < 0 || tag >= adapter.getItemCount()) {
+                    return true;
+                }
+
+                if (Math.abs(animatingView.getLeft() - destX) < mTouchSlop && Math.abs(event.getX() - downX) < mTouchSlop) {
                     return true;
                 }
 
