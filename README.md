@@ -9,7 +9,7 @@ The following pictures were captured earlier. Since the source code and the outp
 Recently I have seen this kind of UI design, and at the first sight I was trying to implement it by using RecyclerView's LayoutManager. Unfortunately, I am unable to contrust a clear Math model while sliding the PileView. After several tries, I gave up LayoutManager, and find another way for this implementation. If you make LayoutManager works well for this UI design, please tell me later.
 
 ### how to use
-1. decleare PileLayout in your xml file
+1. declare PileLayout in your xml file
 ```xml
 <com.stone.pile.libs.PileLayout
         android:id="@+id/pileLayout"
