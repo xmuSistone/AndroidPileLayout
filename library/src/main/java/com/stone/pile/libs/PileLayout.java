@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
-import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 
 import java.util.ArrayList;
@@ -26,7 +25,6 @@ import java.util.List;
 public class PileLayout extends ViewGroup {
 
     private final int mMaximumVelocity;
-    private List<FrameLayout> itemViewList = new ArrayList<>();
     private OnClickListener onClickListener;
 
     // 以下三个参数，可通过属性定制
@@ -258,7 +256,7 @@ public class PileLayout extends ViewGroup {
                 int velocity = (int) velocityTracker.getXVelocity();
                 recycleVelocityTracker();
 
-                animatingView = itemViewList.get(3);
+                animatingView = (FrameLayout) getChildAt(3);
                 animateValue = animatingView.getLeft();
                 int tag = Integer.parseInt(animatingView.getTag().toString());
 
@@ -291,29 +289,27 @@ public class PileLayout extends ViewGroup {
             return;
         }
 
-        int currentPosition = Integer.parseInt(itemViewList.get(3).getTag().toString());
+        int currentPosition = Integer.parseInt(getChildAt(3).getTag().toString());
         if (dx < 0 && currentPosition >= adapter.getItemCount()) {
             return;
         } else if (dx > 0) {
             if (currentPosition <= 0) {
                 return;
             } else if (currentPosition == 1) {
-                if (itemViewList.get(3).getLeft() + dx >= originX.get(4)) {
-                    dx = originX.get(4) - itemViewList.get(3).getLeft();
+                if (getChildAt(3).getLeft() + dx >= originX.get(4)) {
+                    dx = originX.get(4) - getChildAt(3).getLeft();
                 }
             }
         }
 
 
-        int num = itemViewList.size();
+        int num = getChildCount();
 
         // 1. View循环复用
-        FrameLayout firstView = itemViewList.get(0);
+        FrameLayout firstView = (FrameLayout) getChildAt(0);
         if (dx > 0 && firstView.getLeft() >= originX.get(1)) {
             // 向右滑动，从左边把View补上
-            FrameLayout lastView = itemViewList.get(itemViewList.size() - 1);
-            itemViewList.remove(lastView);
-            itemViewList.add(0, lastView);
+            FrameLayout lastView = (FrameLayout) getChildAt(getChildCount() - 1);
 
             LayoutParams lp = lastView.getLayoutParams();
             removeViewInLayout(lastView);
@@ -330,9 +326,6 @@ public class PileLayout extends ViewGroup {
             }
         } else if (dx < 0 && firstView.getLeft() <= originX.get(0)) {
             // 向左滑动，从右边把View补上
-            itemViewList.remove(firstView);
-            itemViewList.add(firstView);
-
             LayoutParams lp = firstView.getLayoutParams();
             removeViewInLayout(firstView);
             addViewInLayout(firstView, -1, lp);
@@ -349,7 +342,7 @@ public class PileLayout extends ViewGroup {
         }
 
         // 2. 位置修正
-        View view3 = itemViewList.get(3);
+        View view3 = getChildAt(3);
         float rate = (float) ((view3.getLeft() + dx) - originX.get(3)) / scrollDistanceMax;
         if (rate < 0) {
             rate = 0;
@@ -361,7 +354,7 @@ public class PileLayout extends ViewGroup {
             endAnim = true;
         }
         for (int i = 0; i < num; i++) {
-            View itemView = itemViewList.get(i);
+            View itemView = getChildAt(i);
             if (endAnim) {
                 itemView.offsetLeftAndRight(originX.get(i + 1) - itemView.getLeft());
             } else if (itemView == animatingView) {
@@ -419,16 +412,15 @@ public class PileLayout extends ViewGroup {
                 addView(frameLayout);
                 frameLayout.setTag(i - 3); // 这个tag主要是对应于在dataList中的数据index
                 frameLayout.measure(everyWidth, everyHeight);
-                itemViewList.add(frameLayout);
             }
         }
 
-        int num = itemViewList.size();
+        int num = getChildCount();
         for (int i = 0; i < num; i++) {
             if (i < 3) {
-                itemViewList.get(i).setVisibility(View.INVISIBLE);
+                getChildAt(i).setVisibility(View.INVISIBLE);
             } else {
-                FrameLayout frameLayout = itemViewList.get(i);
+                FrameLayout frameLayout = (FrameLayout) getChildAt(i);
                 frameLayout.setVisibility(View.VISIBLE);
                 adapter.bindView(frameLayout.getChildAt(0), i - 3);
             }
@@ -440,9 +432,9 @@ public class PileLayout extends ViewGroup {
      * 数据更新通知
      */
     public void notifyDataSetChanged() {
-        int num = itemViewList.size();
+        int num = getChildCount();
         for (int i = 0; i < num; i++) {
-            FrameLayout frameLayout = itemViewList.get(i);
+            FrameLayout frameLayout = (FrameLayout) getChildAt(i);
             int tag = Integer.parseInt(frameLayout.getTag().toString());
             if (tag > 0 && tag < adapter.getItemCount()) {
                 frameLayout.setVisibility(View.VISIBLE);
