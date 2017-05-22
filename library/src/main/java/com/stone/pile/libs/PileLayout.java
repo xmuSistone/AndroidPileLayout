@@ -228,6 +228,8 @@ public class PileLayout extends ViewGroup {
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
                 recycleVelocityTracker();
+                // ACTION_UP还能拦截，说明手指没滑动，只是一个click事件，同样需要snap到特定位置
+                onRelease(event.getX(), 0);
                 break;
         }
         return false; // 默认都是不拦截的
@@ -256,32 +258,35 @@ public class PileLayout extends ViewGroup {
                 int velocity = (int) velocityTracker.getXVelocity();
                 recycleVelocityTracker();
 
-                animatingView = (FrameLayout) getChildAt(3);
-                animateValue = animatingView.getLeft();
-                int tag = Integer.parseInt(animatingView.getTag().toString());
-
-                // 计算目标位置
-                int destX = originX.get(3);
-                if (velocity > VELOCITY_THRESHOLD || (animatingView.getLeft() > originX.get(3) + scrollDistanceMax / 2 && velocity > -VELOCITY_THRESHOLD)) {
-                    destX = originX.get(4);
-                    tag--;
-                }
-                if (tag < 0 || tag >= adapter.getItemCount()) {
-                    return true;
-                }
-
-                if (Math.abs(animatingView.getLeft() - destX) < mTouchSlop && Math.abs(event.getX() - downX) < mTouchSlop) {
-                    return true;
-                }
-
-                adapter.displaying(tag);
-                animator = ObjectAnimator.ofFloat(this, "animateValue", animatingView.getLeft(), destX);
-                animator.setInterpolator(interpolator);
-                animator.setDuration(360).start();
-
+                onRelease(event.getX(), velocity);
                 break;
         }
         return true;
+    }
+
+    private void onRelease(float eventX, int velocityX) {
+        animatingView = (FrameLayout) getChildAt(3);
+        animateValue = animatingView.getLeft();
+        int tag = Integer.parseInt(animatingView.getTag().toString());
+
+        // 计算目标位置
+        int destX = originX.get(3);
+        if (velocityX > VELOCITY_THRESHOLD || (animatingView.getLeft() > originX.get(3) + scrollDistanceMax / 2 && velocityX > -VELOCITY_THRESHOLD)) {
+            destX = originX.get(4);
+            tag--;
+        }
+        if (tag < 0 || tag >= adapter.getItemCount()) {
+            return;
+        }
+
+        if (Math.abs(animatingView.getLeft() - destX) < mTouchSlop && Math.abs(eventX - downX) < mTouchSlop) {
+            return;
+        }
+
+        adapter.displaying(tag);
+        animator = ObjectAnimator.ofFloat(this, "animateValue", animatingView.getLeft(), destX);
+        animator.setInterpolator(interpolator);
+        animator.setDuration(360).start();
     }
 
     private void requireScrollChange(int dx) {
