@@ -426,7 +426,7 @@ public class PileLayout extends ViewGroup {
                 getChildAt(i).setVisibility(View.INVISIBLE);
             } else {
                 FrameLayout frameLayout = (FrameLayout) getChildAt(i);
-                if (i < adapter.getItemCount()) {
+                if (i - 3 < adapter.getItemCount()) {
                     frameLayout.setVisibility(View.VISIBLE);
                     adapter.bindView(frameLayout.getChildAt(0), i - 3);
                 } else {
