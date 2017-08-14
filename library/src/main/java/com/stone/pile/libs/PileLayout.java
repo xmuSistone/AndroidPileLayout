@@ -426,11 +426,18 @@ public class PileLayout extends ViewGroup {
                 getChildAt(i).setVisibility(View.INVISIBLE);
             } else {
                 FrameLayout frameLayout = (FrameLayout) getChildAt(i);
-                frameLayout.setVisibility(View.VISIBLE);
-                adapter.bindView(frameLayout.getChildAt(0), i - 3);
+                if (i < adapter.getItemCount()) {
+                    frameLayout.setVisibility(View.VISIBLE);
+                    adapter.bindView(frameLayout.getChildAt(0), i - 3);
+                } else {
+                    frameLayout.setVisibility(View.INVISIBLE);
+                }
             }
         }
-        adapter.displaying(0);
+
+        if (adapter.getItemCount() > 0) {
+            adapter.displaying(0);
+        }
     }
 
     /**
